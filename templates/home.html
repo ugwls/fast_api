@@ -9,5 +9,10 @@
 <body>
     <h1>THIS IS THE HOME PAGE</h1>
     <h2>USERNAME = {{ username }}</h2>
+    <form action="/submitform" method="post" enctype="multipart/form-data"> 
+        <input type="text" name="assigment">
+        <input type="file" name="assigment_file">
+        <input type="submit">
+    </form>
 </body>
 </html>
