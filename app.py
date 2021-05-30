@@ -1,48 +1,29 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body, Request
 from pydantic import BaseModel
-
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 app = FastAPI()
 
 list_of_username = []
+templates = Jinja2Templates(directory='templates')
 
 
-@app.get("/home/{user_name}")
-def write_home(user_name: str, query):
-    return {
-        "Name": user_name,
-        "Age": 18,
-        "Query": query
-    }
+class NameValue(BaseModel):
+    name: str = None
+    country: str
+    age: int
+    base_salary: float
 
 
-@app.put('/username/{user_name}')
-def put_data(user_name: str):
-    print(user_name)
-    list_of_username.append(user_name)
-    return {
-        "username": user_name
-    }
+@app.get("/home/{user_name}", response_class=HTMLResponse)
+def write_home(request: Request, user_name: str):
+    return templates.TemplateResponse('home.html', {"request": request, "username": user_name})
 
 
 @app.post('/postData')
-def post_data(user_name: str):
-    list_of_username.append(user_name)
+def post_data(namevalue: NameValue, spousal_status: str = Body(...)):
+    print(NameValue)
     return {
-        "username": list_of_username
-    }
-
-
-@app.delete("/deletedata/{user_name}")
-def delete_data(user_name: str):
-    list_of_username.remove(user_name)
-    return {
-        "username": list_of_username
-    }
-
-
-@app.api_route('/homedata', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def handle_homedata(user_name: str):
-    print(user_name)
-    return {
-        "username": user_name
+        "name": namevalue.name,
+        "spousal status": spousal_status
     }
