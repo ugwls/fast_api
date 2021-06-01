@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Body, Request, File, UploadFile, Form, Depends
+from fastapi import FastAPI, Body, Request, File, UploadFile, Form, Depends, BackgroundTasks
 from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, oauth2
+import time
 app = FastAPI()
 
 list_of_username = []
@@ -16,6 +17,25 @@ class NameValue(BaseModel):
     country: str
     age: int
     base_salary: float
+
+
+def handle_email_bg(email: str, data: str):
+    print(email)
+    print(data)
+    for i in range(100):
+        print(i)
+        time.sleep(0.1)
+
+
+@app.get("/users/email")
+async def handle_email(email: str, background_task: BackgroundTasks):
+    print(email)
+    background_task.add_task(handle_email_bg, email,
+                             "This is a sample backgorung task")
+    return {
+        "user": "Ujjwal",
+        "Message": "Mail Sent"
+    }
 
 
 @app.post("/token")
